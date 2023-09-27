@@ -1,6 +1,5 @@
 import styles from './navbar.module.css';
 import { useState, useEffect } from 'react';
-import { ethers } from "ethers";
 
 declare var window: any
 
@@ -33,30 +32,23 @@ export default function Navbar() {
             // console.log("Connected", accounts[0]);
             setCurrentAccount(accounts[0]);
 
-            // i'm only doing this because it's not in checkout, once it's there this ain't needed
-            // fetch('/api/verify', {
-            //     method: 'POST',
-            //     headers: {
-            //         'Content-Type': 'application/json',
-            //     },
-            //     body: JSON.stringify({ currentAccount: accounts[0] }), // Use accounts[0] directly
-            // })
-            //     .then((response) => response.json())
-            //     .then((data) => {
-            //         // Handle response from backend
-            //     })
-            //     .catch((error) => {
-            //         // Handle error
-            //     });
-
         } catch (error) {
             console.error(error);
         }
     };
 
     useEffect(() => {
-        connectWallet();
-    }, [])
+        const checkMetaMask = async () => {
+            const ethereum = getEthereumObject();
+            if (ethereum) {
+                // Request the current accounts from MetaMask
+                const accounts = await ethereum.request({ method: 'eth_accounts' }) as string[];
+                setCurrentAccount(accounts[0]);
+            }
+        };
+
+        checkMetaMask();
+    }, []);
 
     return (
         <div className={styles.navbar}>
